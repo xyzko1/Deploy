@@ -1,0 +1,105 @@
+{
+  "globals": [ "F:\\能源汽车报\\项目-分支\\FusionMediaPlatform" ],
+  "servers": [
+    {
+      "host": "192.168.10.3",
+      "port": 22,
+      "username": "root",
+      "password": "nyqcjt@123",
+      "packages": [
+        {
+          "enable": true,
+          "variables": [ "GLOBAL0", "/taiji/jars/taiji-config-0.0.1-SNAPSHOT-boot.jar", "taiji-config-0.0.1-SNAPSHOT-boot" ],
+          "commands": [
+            "bak {1}",
+            "upload {0}\\taiji-config\\target\\{2}.jar {1}",
+            "sleep 5",
+            "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
+            "sleep 5",
+            "nohup $(type java | awk '{print $3}') -jar -Xms256m -Xmx512m {1} --spring.profiles.active=prod,native > /taiji/jars/config_info.log 2>&1 &"
+          ]
+        }
+      ]
+    },
+    {
+      "host": "192.168.10.4",
+      "port": 22,
+      "username": "root",
+      "password": "nyqcjt@123",
+      "packages": [
+        {
+          "enable": true,
+          "order": 0,
+          "variables": [ "GLOBAL0" ],
+          "commands": [
+            "upload {0}\\taiji-soa-printMedia\\target\\lib\\taiji-general-1.0-SNAPSHOT.jar /taiji/jars/printMedia/lib/taiji-general-1.0-SNAPSHOT.jar"
+          ]
+        },
+        {
+          "enable": true,
+          "order": 1,
+          "variables": [ "GLOBAL0", "/taiji/jars/printMedia/taiji-soa-printMedia-0.0.1-SNAPSHOT-boot.jar", "taiji-soa-printMedia-0.0.1-SNAPSHOT-boot" ],
+          "commands": [
+            "bak {1}",
+            "upload {0}\\taiji-soa-printMedia\\target\\{2}.jar {1}",
+            "sleep 5",
+            "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
+            "sleep 5",
+            "nohup $(type java | awk '{print $3}') -jar -Xms256m -Xmx512m {1} --spring.profiles.active=prod,mysql >/taiji/jars/printMedia/printMedia_info.log 2>&1 &"
+          ]
+        }
+      ]
+    },
+    {
+      "host": "192.168.10.7",
+      "port": 22,
+      "username": "root",
+      "password": "nyqcjt@123",
+      "packages": [
+        {
+          "enable": true,
+          "order": 0,
+          "variables": [ "GLOBAL0" ],
+          "commands": [
+            "upload {0}\\taiji-soa-content\\target\\lib\\taiji-general-1.0-SNAPSHOT.jar /taiji/jars/cotent/lib/taiji-general-1.0-SNAPSHOT.jar"
+          ]
+        },
+        {
+          "enable": true,
+          "order": 1,
+          "variables": [ "GLOBAL0", "/taiji/jars/cotent/taiji-soa-content-0.0.1-SNAPSHOT-boot.jar", "taiji-soa-content-0.0.1-SNAPSHOT-boot" ],
+          "commands": [
+            "bak {1}",
+            "upload {0}\\taiji-soa-content\\target\\{2}.jar {1}",
+            "sleep 5",
+            "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
+            "sleep 5",
+            "nohup $(type java | awk '{print $3}') -jar -Xms256m -Xmx512m /taiji/jars/cotent/taiji-soa-content-0.0.1-SNAPSHOT-boot.jar --spring.profiles.active=prod,mq,mysql >/taiji/jars/cotent/content.log 2>&1 &"
+          ]
+        }
+      ]
+    },
+    {
+      "host": "192.168.10.5",
+      "port": 22,
+      "username": "root",
+      "password": "nyqcjt@123",
+      "packages": [
+        {
+          "enable": true,
+          "variables": [ "GLOBAL0" ],
+          "commands": [
+            "bak /taiji/jars/web/taiji-api-web-0.0.1-SNAPSHOT-boot.jar",
+            "upload {0}\\taiji-api-web\\target\\lib\\taiji-general-1.0-SNAPSHOT.jar /taiji/jars/web/lib/taiji-general-1.0-SNAPSHOT.jar",
+            "sleep 5",
+            "upload {0}\\taiji-api-web\\target\\taiji-api-web-0.0.1-SNAPSHOT-boot.jar /taiji/jars/web/taiji-api-web-0.0.1-SNAPSHOT-boot.jar",
+            "sleep 5",
+            "kill -9 $(ps -ef|grep taiji-api-web-0.0.1-SNAPSHOT-boot | grep -v grep | awk '{print $2}')",
+            "sleep 5",
+            "nohup $(type java | awk '{print $3}') -jar -Xms256m -Xmx512m /taiji/jars/web/taiji-api-web-0.0.1-SNAPSHOT-boot.jar --spring.profiles.active=prod,mq,redis,hmtools 1>/taiji/jars/web/web_info.log 2>&1 &"
+          ]
+        }
+      ]
+    }
+  ]
+}
