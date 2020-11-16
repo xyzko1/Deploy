@@ -8,7 +8,7 @@
       "password": "nyqcjt@123",
       "packages": [
         {
-          "enable": true,
+          "enable": false,
           "variables": [ "GLOBAL0", "/taiji/jars/taiji-config-0.0.1-SNAPSHOT-boot.jar", "taiji-config-0.0.1-SNAPSHOT-boot" ],
           "commands": [
             "bak {1}",
@@ -16,7 +16,8 @@
             "sleep 5",
             "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
             "sleep 5",
-            "nohup $(type java | awk '{print $3}') -jar -Xms256m -Xmx512m {1} --spring.profiles.active=prod,native > /taiji/jars/config_info.log 2>&1 &"
+            "nohup /usr/java/jdk1.8.0_192/bin/java -jar -Xms256m -Xmx512m {1} --spring.profiles.active=prod,native > /taiji/jars/config_info.log 2>&1 &"
+            //"echo $(type -p java) >> /root/1.txt"
           ]
         }
       ]
@@ -28,7 +29,7 @@
       "password": "nyqcjt@123",
       "packages": [
         {
-          "enable": true,
+          "enable": false,
           "order": 0,
           "variables": [ "GLOBAL0" ],
           "commands": [
@@ -36,7 +37,7 @@
           ]
         },
         {
-          "enable": true,
+          "enable": false,
           "order": 1,
           "variables": [ "GLOBAL0", "/taiji/jars/printMedia/taiji-soa-printMedia-0.0.1-SNAPSHOT-boot.jar", "taiji-soa-printMedia-0.0.1-SNAPSHOT-boot" ],
           "commands": [
@@ -45,7 +46,7 @@
             "sleep 5",
             "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
             "sleep 5",
-            "nohup $(type java | awk '{print $3}') -jar -Xms256m -Xmx512m {1} --spring.profiles.active=prod,mysql >/taiji/jars/printMedia/printMedia_info.log 2>&1 &"
+            "nohup $(type java | awk '{print $3}') -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=45999 -jar -Xms256m -Xmx512m {1} --spring.profiles.active=prod,mysql >/taiji/jars/printMedia/printMedia_info.log 2>&1 &"
           ]
         }
       ]
@@ -57,24 +58,53 @@
       "password": "nyqcjt@123",
       "packages": [
         {
-          "enable": true,
+          "enable": false,
           "order": 0,
           "variables": [ "GLOBAL0" ],
           "commands": [
-            "upload {0}\\taiji-soa-content\\target\\lib\\taiji-general-1.0-SNAPSHOT.jar /taiji/jars/cotent/lib/taiji-general-1.0-SNAPSHOT.jar"
+            "upload {0}\\taiji-soa-content\\target\\lib\\taiji-general-1.0-SNAPSHOT.jar /taiji/jars/content/lib/taiji-general-1.0-SNAPSHOT.jar"
           ]
         },
         {
-          "enable": true,
+          "enable": false,
           "order": 1,
-          "variables": [ "GLOBAL0", "/taiji/jars/cotent/taiji-soa-content-0.0.1-SNAPSHOT-boot.jar", "taiji-soa-content-0.0.1-SNAPSHOT-boot" ],
+          "variables": [ "GLOBAL0", "/taiji/jars/content/taiji-soa-content-0.0.1-SNAPSHOT-boot.jar", "taiji-soa-content-0.0.1-SNAPSHOT-boot" ],
           "commands": [
             "bak {1}",
             "upload {0}\\taiji-soa-content\\target\\{2}.jar {1}",
             "sleep 5",
             "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
             "sleep 5",
-            "nohup $(type java | awk '{print $3}') -jar -Xms256m -Xmx512m /taiji/jars/cotent/taiji-soa-content-0.0.1-SNAPSHOT-boot.jar --spring.profiles.active=prod,mq,mysql >/taiji/jars/cotent/content.log 2>&1 &"
+            "nohup $(type java | awk '{print $3}') -jar -Xms256m -Xmx512m {1} --spring.profiles.active=prod,mq,mysql >/taiji/jars/content/content.log 2>&1 &"
+          ]
+        },
+        {
+          "enable": false,
+          "order": 1,
+          "variables": [ "GLOBAL0", "/taiji/jars/content/taiji-soa-content-0.0.1-SNAPSHOT-boot.jar", "taiji-soa-content-0.0.1-SNAPSHOT-boot" ],
+          "commands": [
+            "bak {1}",
+            "upload {0}\\taiji-soa-content\\target\\lib\\taiji-general-1.0-SNAPSHOT.jar /taiji/jars/content/lib/taiji-general-1.0-SNAPSHOT.jar",
+            "upload {0}\\taiji-soa-content\\target\\{2}.jar {1}",
+            "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
+            "sleep 5",
+            "nohup $(type java | awk '{print $3}') -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=45998 -jar -Xms256m -Xmx512m {1} --spring.profiles.active=prod,mq,mysql >/taiji/jars/content/content.log 2>&1 &"
+          ]
+        },
+        {
+          "enable": true,
+          "order": 2,
+          "variables": [ "GLOBAL0", "/taiji/jars/evaluate/taiji-soa-evaluate-1.0-SNAPSHOT-boot.jar", "taiji-soa-evaluate-1.0-SNAPSHOT-boot" ],
+          "commands": [
+            "bak {1}",
+            //"upload {0}\\taiji-soa-evaluate\\target\\lib\\taiji-general-1.0-SNAPSHOT.jar /taiji/jars/evaluate/lib/taiji-general-1.0-SNAPSHOT.jar",
+            //"upload {0}\\taiji-soa-evaluate\\target\\resources\\mapping\\PaperMediaMapper.xml /taiji/jars/evaluate/resources/mapping/PaperMediaMapper.xml",
+            "upload {0}\\taiji-soa-evaluate\\target\\{2}.jar {1}",
+            //"sleep 5",
+            "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
+            "sleep 5",
+            //"nohup $(type java | awk '{print $3}') -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=45996 -jar -Xms256m -Xmx512m {1} --spring.profiles.active=prod,mq,redis,hmtools >/taiji/jars/evaluate/evaluate_info.log 2>&1 &"
+            "nohup $(type java | awk '{print $3}') -jar -Xms256m -Xmx512m {1} --spring.profiles.active=prod,mq,redis,hmtools >/taiji/jars/evaluate/evaluate_info.log 2>&1 &"
           ]
         }
       ]
@@ -86,7 +116,7 @@
       "password": "nyqcjt@123",
       "packages": [
         {
-          "enable": true,
+          "enable": false,
           "variables": [ "GLOBAL0" ],
           "commands": [
             "bak /taiji/jars/web/taiji-api-web-0.0.1-SNAPSHOT-boot.jar",
@@ -97,6 +127,47 @@
             "kill -9 $(ps -ef|grep taiji-api-web-0.0.1-SNAPSHOT-boot | grep -v grep | awk '{print $2}')",
             "sleep 5",
             "nohup $(type java | awk '{print $3}') -jar -Xms256m -Xmx512m /taiji/jars/web/taiji-api-web-0.0.1-SNAPSHOT-boot.jar --spring.profiles.active=prod,mq,redis,hmtools 1>/taiji/jars/web/web_info.log 2>&1 &"
+          ]
+        },
+        {
+          "enable": false,
+          "variables": [ "GLOBAL0" ],
+          "commands": [
+            "bak /taiji/jars/web/taiji-api-web-0.0.1-SNAPSHOT-boot.jar",
+            "upload {0}\\taiji-api-web\\target\\lib\\taiji-general-1.0-SNAPSHOT.jar /taiji/jars/web/lib/taiji-general-1.0-SNAPSHOT.jar",
+            "sleep 5",
+            "upload {0}\\taiji-api-web\\target\\taiji-api-web-0.0.1-SNAPSHOT-boot.jar /taiji/jars/web/taiji-api-web-0.0.1-SNAPSHOT-boot.jar",
+            "sleep 5",
+            "kill -9 $(ps -ef|grep taiji-api-web-0.0.1-SNAPSHOT-boot | grep -v grep | awk '{print $2}')",
+            "sleep 5",
+            "nohup $(type java | awk '{print $3}') -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=45997 -jar -Xms256m -Xmx512m /taiji/jars/web/taiji-api-web-0.0.1-SNAPSHOT-boot.jar --spring.profiles.active=prod,mq,redis,hmtools 1>/taiji/jars/web/web_info.log 2>&1 &"
+          ]
+        }
+      ]
+    },
+    {
+      "host": "192.168.10.15",
+      "port": 22,
+      "username": "root",
+      "password": "nyqcjt@123",
+      "packages": [
+        {
+          "enable": false,
+          "variables": [ "GLOBAL0", "/usr/local/nginx/html" ],
+          "commands": [
+            //"$(type zip | awk '{print $3}') -r {1}/fmp.20201111.bak.zip {1}/fmp/*",
+            //"sleep 5",
+            "upload F:\\能源汽车报\\项目-分支\\FusionMediaPlatform-web.4.3.1\\fmp\\fmp.zip {1}/fmp.zip",
+            "sleep 5",
+            "$(type unzip | awk '{print $3}') -d {1}/fmp/ -o {1}/fmp.zip"
+          ]
+        },
+        {
+          "enable": false,
+          "variables": [ "GLOBAL0", "/usr/local/nginx/html" ],
+          "commands": [
+            "upload F:\\能源汽车报\\项目-分支\\FusionMediaPlatform-web.4.3.1\\fmp\\src\\controller\\sample_browsing.js {1}/fmp/src/controller/sample_browsing.js",
+            "upload F:\\能源汽车报\\项目-分支\\FusionMediaPlatform-web.4.3.1\\fmp\\src\\controller\\dist_newspaper_lib.js {1}/fmp/src/controller/dist_newspaper_lib.js"
           ]
         }
       ]

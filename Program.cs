@@ -21,6 +21,29 @@ namespace Deploy
             sr.Dispose();
 
             List<ServerTask> tasks = LoadTasks(config);
+            if (tasks.Count == 0)
+            {
+                Console.WriteLine("无任何指令需要执行，按任意键退出..");
+                Console.ReadKey();
+                return;
+            }
+            foreach (var server in tasks)
+            {
+                Console.WriteLine("服务器 {0} ", server.host);
+                Console.WriteLine("================================执行命令================================");
+                foreach (var c in server.commands)
+                {
+                    Console.WriteLine(c);
+                }
+            }
+            Console.Write("确认执行上述命令吗？y/N:");
+            if (Console.ReadKey().Key != ConsoleKey.Y)
+            {
+                Console.WriteLine("\n请按任意键退出..");
+                Console.ReadKey();
+                return;
+            }
+            Console.WriteLine("");
 
             foreach (var server in tasks)
             {
@@ -113,11 +136,7 @@ namespace Deploy
                     }
                     else
                     {
-                        using (var cmd = sshClient.CreateCommand(command))
-                        {
-                            var res = cmd.Execute();
-                            Console.WriteLine(res);
-                        }
+                        ExcuteCommand(sshClient, command);
                     }
                 }
             }
@@ -136,19 +155,34 @@ namespace Deploy
                     Console.Write("上传进度: {0}/{1}----------{2}%\r", current, total, current * 100 / total);
                 });
             }
-            Console.WriteLine("文件上传完成");
+            Console.WriteLine("\n文件上传完成");
         }
 
         static void Bak(SshClient sshClient, string filePath)
         {
             Console.WriteLine("开始备份文件 {0}", filePath);
-            var command = string.Format("mv {0} {0}-{1:yyyyMMdd}", filePath, DateTime.Now);
+            var bakPath = string.Format("{0}-{1:yyyyMMdd}", filePath, DateTime.Now);
+            var res = ExcuteCommand(sshClient, "ls -al " + bakPath);
+            if (string.IsNullOrEmpty(res))
+            {
+                var command = string.Format("mv {0} {1}", filePath, bakPath);
+                ExcuteCommand(sshClient, command);
+                Console.WriteLine("{0}备份完成！", filePath);
+            }
+            else
+            {
+                Console.WriteLine("文件已存在，跳过备份！");
+            }
+        }
+
+        static string ExcuteCommand(SshClient sshClient, string command)
+        {
             using (var cmd = sshClient.CreateCommand(command))
             {
                 var res = cmd.Execute();
                 Console.WriteLine(res);
+                return res;
             }
-            Console.WriteLine("{0}备份完成！", filePath);
         }
     }
 }
