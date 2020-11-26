@@ -14,7 +14,7 @@ namespace Deploy
         const string GLOBAL = "GLOBAL";
         static void Main(string[] args)
         {
-            string json = "app.json";
+            string json = args.Length == 0 ? "app.json" : args[0];
             StreamReader sr = new StreamReader(json, Encoding.UTF8);
             var t = sr.ReadToEnd();
             var config = JsonConvert.DeserializeObject<Config>(t);
@@ -29,8 +29,7 @@ namespace Deploy
             }
             foreach (var server in tasks)
             {
-                Console.WriteLine("服务器 {0} ", server.host);
-                Console.WriteLine("================================执行命令================================");
+                Console.WriteLine("服务器 {0} ================================执行命令================================", server.host);
                 foreach (var c in server.commands)
                 {
                     Console.WriteLine(c);
@@ -88,7 +87,7 @@ namespace Deploy
                         {
                             variables = variables.Select(p =>
                             {
-                                if (p.StartsWith("GLOBAL"))
+                                if (p.StartsWith(GLOBAL))
                                 {
                                     return config.globals[int.Parse(p.Substring(6))];
                                 }
@@ -126,19 +125,46 @@ namespace Deploy
                 {
                     Console.WriteLine("开始执行命令:" + command);
                     var arr = command.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-                    if (arr.Length == 3 && arr[0] == "upload")
+                    if (arr.Length == 3 && arr[0].ToLower() == "upload")
                     {
                         Upload(server, arr[1], arr[2]);
                     }
-                    else if (arr.Length == 2 && arr[0] == "bak")
+                    else if (arr.Length == 3 && arr[0].ToLower().StartsWith("uploaddir"))
+                    {
+                        var s = arr[0].Substring(9);
+                        UploadDir(server, arr[1], arr[2], string.IsNullOrEmpty(s) ? 0 : int.Parse(s));
+                    }
+                    else if (arr.Length == 2 && arr[0].ToLower() == "bak")
                     {
                         Bak(sshClient, arr[1]);
+                    }
+                    else if (arr.Length >= 3 && arr[0].ToLower() == "zipbak")
+                    {
+
+                        ZipBak(sshClient, arr[1], arr.Skip(2));
                     }
                     else
                     {
                         ExcuteCommand(sshClient, command);
                     }
                 }
+            }
+        }
+
+
+
+        static void UploadDir(ServerTask server, string sourceDir, string targetDir, int count)
+        {
+            Console.WriteLine("开始上传文件夹 {0} 到 {1}", sourceDir, targetDir);
+            DirectoryInfo di = new DirectoryInfo(sourceDir);
+            if (!di.Exists)
+                throw new Exception($"文件夹{sourceDir}不存在");
+            IEnumerable<FileInfo> files = di.GetFiles();
+            if (count > 0)
+                files = files.OrderByDescending(p => p.LastWriteTime).Take(count);
+            foreach (var file in files)
+            {
+                Upload(server, file.FullName, Path.Combine(targetDir, file.Name));
             }
         }
 
@@ -175,12 +201,34 @@ namespace Deploy
             }
         }
 
+        static void ZipBak(SshClient sshClient, string targetZip, IEnumerable<string> paths)
+        {
+            Console.WriteLine("开始进行zip备份 {0}", targetZip);
+            var bakPath = string.Format("{0}.{1:yyyyMMdd}.bak.zip", targetZip, DateTime.Now);
+            var res = ExcuteCommand(sshClient, "ls -al " + bakPath);
+            if (string.IsNullOrEmpty(res))
+            {
+                var command = @"$(type zip | awk '{print $3}') -r " + bakPath;
+                foreach (var p in paths)
+                {
+                    command += " " + p;
+                }
+                ExcuteCommand(sshClient, command);
+                Console.WriteLine("{0}备份完成！", targetZip);
+            }
+            else
+            {
+                Console.WriteLine("文件已存在，跳过备份！");
+            }
+        }
+
         static string ExcuteCommand(SshClient sshClient, string command)
         {
+            Console.WriteLine("执行命令：" + command);
             using (var cmd = sshClient.CreateCommand(command))
             {
                 var res = cmd.Execute();
-                Console.WriteLine(res);
+                Console.WriteLine("命令返回：" + res);
                 return res;
             }
         }
