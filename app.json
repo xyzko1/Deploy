@@ -1,230 +1,249 @@
 {
-  "globals": [ "F:\\能源汽车报\\项目-分支\\FusionMediaPlatform" ],
+  "globals": [ "D:\\TaijiProJava\\证券报\\service" ],
   "servers": [
     {
-      "host": "192.168.10.3",
+      "host": "192.168.19.132",
       "port": 22,
       "username": "root",
-      "password": "nyqcjt@123",
+      "password": "Centos7.8",
       "packages": [
         {
           "enable": false,
-          "variables": [ "GLOBAL0", "/taiji/jars/taiji-config-0.0.1-SNAPSHOT-boot.jar", "taiji-config-0.0.1-SNAPSHOT-boot" ],
+          "variables": [ "GLOBAL0", "/taiji/jars/eureka/", "taiji-eureka-0.0.1-SNAPSHOT-boot" ],
           "commands": [
-            "bak {1}",
-            "upload {0}\\taiji-config\\target\\{2}.jar {1}",
-            "sleep 5",
+            //"mkdir -p {1}",
+            "upload {0}\\taiji-eureka\\target\\{2}.jar {1}{2}.jar",
             "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
             "sleep 5",
-            "nohup /usr/java/jdk1.8.0_192/bin/java -jar -Xms256m -Xmx512m {1} --spring.profiles.active=prod,native > /taiji/jars/config_info.log 2>&1 &"
-            //"echo $(type -p java) >> /root/1.txt"
+            "nohup java -jar -Xms256m -Xmx512m {1}{2}.jar --server.port=8761 --spring.profiles.active=dev > {1}info.log 2>&1 &"
+          ]
+        },
+        {
+          "enable": true,
+          "variables": [ "GLOBAL0", "/taiji/jars/config/", "taiji-config-0.0.1-SNAPSHOT-boot" ],
+          "commands": [
+            //"mkdir -p {1}",
+            //"upload {0}\\taiji-config\\target\\{2}.jar {1}{2}.jar",
+            "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
+            "sleep 5",
+            "nohup /usr/local/java/bin/java -jar -Xms256m -Xmx512m {1}{2}.jar --spring.profiles.active=prod,native > {1}info.log 2>&1 &"
+          ]
+        },
+        {
+          "enable": false,
+          "variables": [ "GLOBAL0", "/taiji/jars/gateway/", "taiji-gateway-0.0.1-SNAPSHOT-boot" ],
+          "commands": [
+            //"mkdir -p {1}",
+            //"upload {0}\\taiji-gateway\\target\\{2}.jar {1}{2}.jar",
+            "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
+            "sleep 5",
+            "nohup /usr/local/java/bin/java -jar -Xms256m -Xmx512m {1}{2}.jar --spring.profiles.active=prod --spring.cloud.config.uri=http://192.168.19.132:8762 > {1}info.log 2>&1 &"
+          ]
+        },
+        {
+          "enable": false,
+          "variables": [ "GLOBAL0", "/taiji/jars/saas/", "taiji-saas-manage-0.0.1-SNAPSHOT-boot" ],
+          "commands": [
+            //"mkdir -p {1}",
+            //"upload {0}\\taiji-saas-manage\\target\\{2}.jar {1}{2}.jar",
+            "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
+            "sleep 5",
+            "nohup /usr/local/java/bin/java -jar -Xms256m -Xmx512m {1}{2}.jar --spring.profiles.active=prod,native --spring.cloud.config.uri=http://192.168.19.132:8762 > {1}info.log 2>&1 &"
           ]
         }
       ]
     },
     {
-      "host": "192.168.10.4",
+      "host": "192.168.19.133",
       "port": 22,
       "username": "root",
-      "password": "nyqcjt@123",
+      "password": "Centos7.8",
       "packages": [
         {
           "enable": false,
           "variables": [ "GLOBAL0", "/taiji/jars/token/", "taiji-token-0.0.1-SNAPSHOT-boot" ],
           "commands": [
-            "bak {1}{2}.jar",
+            //"mkdir -p {1}",
             "upload {0}\\taiji-token\\target\\{2}.jar {1}{2}.jar",
             "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
             "sleep 5",
-            "nohup java -jar -Xms256m -Xmx512m {1}{2}.jar --spring.profiles.active=prod,mysql,redis,mq > {1}info.log 2>&1 &",
+            "nohup java -jar -Xms256m -Xmx512m {1}{2}.jar --spring.profiles.active=prod,mysql,redis,mq --spring.cloud.config.uri=http://192.168.19.132:8762 > {1}info.log 2>&1 &",
             "sleep 5"
           ]
         },
         {
           "enable": false,
-          "order": 1,
-          "variables": [ "GLOBAL0", "/taiji/jars/printMedia/taiji-soa-printMedia-0.0.1-SNAPSHOT-boot.jar", "taiji-soa-printMedia-0.0.1-SNAPSHOT-boot" ],
+          "variables": [ "GLOBAL0", "/taiji/jars/user/", "taiji-soa-user-0.0.1-SNAPSHOT-boot" ],
           "commands": [
-            //"bak {1}",
-            "zipbak /taiji/jars/printMedia/taiji-soa-printMedia {1} /taiji/jars/printMedia/lib/* /taiji/jars/printMedia/resources/mapping/*",
-            "upload {0}\\taiji-soa-printMedia\\target\\lib\\taiji-general-1.0-SNAPSHOT.jar /taiji/jars/printMedia/lib/taiji-general-1.0-SNAPSHOT.jar",
-            "upload {0}\\taiji-soa-printMedia\\target\\lib\\taiji-common-1.0-SNAPSHOT.jar /taiji/jars/printMedia/lib/taiji-common-1.0-SNAPSHOT.jar",
-            "uploaddir3 {0}\\taiji-soa-printMedia\\target\\resources\\mapping\\ /taiji/jars/printMedia/resources/mapping/",
-            "upload {0}\\taiji-soa-printMedia\\target\\{2}.jar {1}",
+            //"mkdir -p {1}",
+            "zipbak {1}user {1}{2}.jar {1}lib/* {1}resources/mapping/*",
+            "upload {0}\\taiji-soa-user\\target\\user.zip {1}user.zip",
+            "echo $(type unzip)",
+            "cd {1} && $(type -p unzip) -o {1}user.zip",
             "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
             "sleep 5",
-            "nohup $(type java | awk '{print $3}') -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=45999 -jar -Xms256m -Xmx512m {1} --spring.profiles.active=prod,mysql >/taiji/jars/printMedia/printMedia_info.log 2>&1 &"
+            "nohup /usr/local/java/bin/java  -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=55005 -jar -Xms256m -Xmx512m {1}{2}.jar --spring.profiles.active=prod,mysql,mq --spring.cloud.config.uri=http://192.168.19.132:8762 > {1}info.log 2>&1 &"
           ]
         },
         {
           "enable": false,
-          "order": 1,
-          "variables": [ "GLOBAL0", "/taiji/jars/user/taiji-soa-user-0.0.1-SNAPSHOT-boot.jar", "taiji-soa-user-0.0.1-SNAPSHOT-boot" ],
+          "variables": [ "GLOBAL0", "/taiji/jars/printMedia/", "taiji-soa-printMedia-0.0.1-SNAPSHOT-boot" ],
           "commands": [
-            "bak {1}",
-            "upload {0}\\taiji-soa-user\\target\\lib\\taiji-general-1.0-SNAPSHOT.jar /taiji/jars/user/lib/taiji-general-1.0-SNAPSHOT.jar",
-            "upload {0}\\taiji-soa-user\\target\\lib\\taiji-common-1.0-SNAPSHOT.jar /taiji/jars/user/lib/taiji-common-1.0-SNAPSHOT.jar",
-            "uploaddir3 {0}\\taiji-soa-user\\target\\resources\\mapping\\ /taiji/jars/user/resources/mapping/",
-            "upload {0}\\taiji-soa-user\\target\\{2}.jar {1}",
+            //"mkdir -p {1}",
+            //"upload {0}\\taiji-soa-printMedia\\target\\printMedia.zip {1}printMedia.zip",
+            //"cd {1} && $(type -p unzip) -o {1}printMedia.zip",
             "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
             "sleep 5",
-            "nohup $(type java | awk '{print $3}') -jar -Xms256m -Xmx512m {1} --spring.profiles.active=prod,mysql,mq >/taiji/jars/user/user.log 2>&1 &"
-          ]
-        }
-      ]
-    },
-    {
-      "host": "192.168.10.7",
-      "port": 22,
-      "username": "root",
-      "password": "nyqcjt@123",
-      "packages": [
-        {
-          "enable": false,
-          "order": 0,
-          "variables": [ "GLOBAL0" ],
-          "commands": [
-            "upload {0}\\taiji-soa-content\\target\\lib\\taiji-general-1.0-SNAPSHOT.jar /taiji/jars/content/lib/taiji-general-1.0-SNAPSHOT.jar"
-          ]
-        },
-        {
-          "enable": false,
-          "order": 1,
-          "variables": [ "GLOBAL0", "/taiji/jars/content/taiji-soa-content-0.0.1-SNAPSHOT-boot.jar", "taiji-soa-content-0.0.1-SNAPSHOT-boot" ],
-          "commands": [
-            "bak {1}",
-            "upload {0}\\taiji-soa-content\\target\\{2}.jar {1}",
-            "sleep 5",
-            "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
-            "sleep 5",
-            "nohup $(type java | awk '{print $3}') -jar -Xms256m -Xmx512m {1} --spring.profiles.active=prod,mq,mysql >/taiji/jars/content/content.log 2>&1 &"
-          ]
-        },
-        {
-          "enable": false,
-          "order": 1,
-          "variables": [ "GLOBAL0", "/taiji/jars/content/taiji-soa-content-0.0.1-SNAPSHOT-boot.jar", "taiji-soa-content-0.0.1-SNAPSHOT-boot" ],
-          "commands": [
-            //"bak {1}",
-            "zipbak /taiji/jars/content/taiji-soa-content {1} /taiji/jars/content/lib/* /taiji/jars/content/resources/mapping/*",
-            "upload {0}\\taiji-soa-content\\target\\lib\\taiji-general-1.0-SNAPSHOT.jar /taiji/jars/content/lib/taiji-general-1.0-SNAPSHOT.jar",
-            "upload {0}\\taiji-soa-content\\target\\lib\\taiji-common-1.0-SNAPSHOT.jar /taiji/jars/content/lib/taiji-common-1.0-SNAPSHOT.jar",
-            "uploaddir3 {0}\\taiji-soa-content\\target\\resources\\mapping\\ /taiji/jars/content/resources/mapping/",
-            "upload {0}\\taiji-soa-content\\target\\{2}.jar {1}",
-            "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
-            "sleep 5",
-            "nohup $(type java | awk '{print $3}') -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=45998 -jar -Xms256m -Xmx512m {1} --spring.profiles.active=prod,mq,mysql >/taiji/jars/content/content.log 2>&1 &"
-          ]
-        },
-        {
-          "enable": false,
-          "order": 2,
-          "variables": [ "GLOBAL0", "/taiji/jars/evaluate/taiji-soa-evaluate-1.0-SNAPSHOT-boot.jar", "taiji-soa-evaluate-1.0-SNAPSHOT-boot" ],
-          "commands": [
-            "bak {1}",
-            //"upload {0}\\taiji-soa-evaluate\\target\\lib\\taiji-general-1.0-SNAPSHOT.jar /taiji/jars/evaluate/lib/taiji-general-1.0-SNAPSHOT.jar",
-            //"upload {0}\\taiji-soa-evaluate\\target\\resources\\mapping\\PaperMediaMapper.xml /taiji/jars/evaluate/resources/mapping/PaperMediaMapper.xml",
-            "upload {0}\\taiji-soa-evaluate\\target\\{2}.jar {1}",
-            //"sleep 5",
-            "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
-            "sleep 5",
-            "nohup $(type java | awk '{print $3}') -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=45996 -jar -Xms256m -Xmx512m {1} --spring.profiles.active=prod,mq,redis,hmtools >/taiji/jars/evaluate/evaluate_info.log 2>&1 &"
-          ]
-        }
-      ]
-    },
-    {
-      "host": "192.168.10.6",
-      "port": 22,
-      "username": "root",
-      "password": "nyqcjt@123",
-      "packages": [
-        {
-          "enable": false,
-          "variables": [ "GLOBAL0", "/taiji/jars/es/taiji-soa-es-0.0.1-SNAPSHOT.jar", "taiji-soa-es-0.0.1-SNAPSHOT" ],
-          "commands": [
-            "bak {1}",
-            "upload {0}\\taiji-soa-es\\target\\lib\\taiji-general-1.0-SNAPSHOT.jar /taiji/jars/es/lib/taiji-general-1.0-SNAPSHOT.jar",
-            "upload {0}\\taiji-soa-es\\target\\lib\\taiji-common-1.0-SNAPSHOT.jar /taiji/jars/es/lib/taiji-common-1.0-SNAPSHOT.jar",
-            "upload {0}\\taiji-soa-es\\target\\{2}.jar {1}",
-            "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
-            "sleep 5",
-            "nohup $(type java | awk '{print $3}') -jar {1} --spring.profiles.active=prod,mysql,mq,native 1> /taiji/jars/es/es_info.log 2>&1 &"
-          ]
-        },
-        {
-          "enable": false,
-          "variables": [ "GLOBAL0", "/taiji/jars/saas/taiji-saas-manage-0.0.1-SNAPSHOT-boot.jar", "taiji-saas-manage-0.0.1-SNAPSHOT-boot" ],
-          "commands": [
-            "bak {1}",
-            "upload {0}\\taiji-saas-manage\\target\\{2}.jar {1}",
-            "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
-            "sleep 5",
-            "nohup $(type java | awk '{print $3}') -jar -Xms256m -Xmx512m {1} --spring.profiles.active=prod,native 1> /taiji/jars/saas/saasmanage_info.log 2>&1 &"
-          ]
-        }
-      ]
-    },
-    {
-      "host": "192.168.10.5",
-      "port": 22,
-      "username": "root",
-      "password": "nyqcjt@123",
-      "packages": [
-        {
-          "enable": false,
-          "variables": [ "GLOBAL0" ],
-          "commands": [
-            "bak /taiji/jars/web/taiji-api-web-0.0.1-SNAPSHOT-boot.jar",
-            "upload {0}\\taiji-api-web\\target\\taiji-api-web-0.0.1-SNAPSHOT-boot.jar /taiji/jars/web/taiji-api-web-0.0.1-SNAPSHOT-boot.jar",
-            "sleep 5",
-            "kill -9 $(ps -ef|grep taiji-api-web-0.0.1-SNAPSHOT-boot | grep -v grep | awk '{print $2}')",
-            "sleep 5",
-            "nohup $(type java | awk '{print $3}') -jar -Xms256m -Xmx512m /taiji/jars/web/taiji-api-web-0.0.1-SNAPSHOT-boot.jar --spring.profiles.active=prod,mq,redis,hmtools 1>/taiji/jars/web/web_info.log 2>&1 &"
+            "nohup /usr/local/java/bin/java -jar -Xms256m -Xmx512m {1}{2}.jar --spring.profiles.active=prod,mysql --spring.cloud.config.uri=http://192.168.19.132:8762 > {1}info.log 2>&1 &"
           ]
         },
         {
           "enable": true,
-          "variables": [ "GLOBAL0" ],
+          "variables": [ "GLOBAL0", "/taiji/jars/es/", "taiji-soa-es-0.0.1-SNAPSHOT" ],
           "commands": [
-            //"bak /taiji/jars/web/taiji-api-web-0.0.1-SNAPSHOT-boot.jar",
-            "zipbak /taiji/jars/web/taiji-api-web /taiji/jars/web/taiji-api-web-0.0.1-SNAPSHOT-boot.jar /taiji/jars/web/lib/*",
-            "upload {0}\\taiji-api-web\\target\\lib\\taiji-auth-1.0-SNAPSHOT.jar /taiji/jars/web/lib/taiji-auth-1.0-SNAPSHOT.jar",
-            "upload {0}\\taiji-api-web\\target\\taiji-api-web-0.0.1-SNAPSHOT-boot.jar /taiji/jars/web/taiji-api-web-0.0.1-SNAPSHOT-boot.jar",
-            "kill -9 $(ps -ef|grep taiji-api-web-0.0.1-SNAPSHOT-boot | grep -v grep | awk '{print $2}')",
+            //"mkdir -p {1}",
+            //"upload {0}\\{2}.jar {1}{2}.jar",
+            //"upload {0}\\taiji-soa-es\\target\\es.zip {1}es.zip",
+            //"cd {1} && $(type -p unzip) -o {1}es.zip",
+            "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
             "sleep 5",
-            "nohup $(type java | awk '{print $3}') -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=45997 -jar -Xms256m -Xmx512m /taiji/jars/web/taiji-api-web-0.0.1-SNAPSHOT-boot.jar --spring.profiles.active=prod,mq,redis,hmtools 1>/taiji/jars/web/web_info.log 2>&1 &"
+            "nohup /usr/local/java/bin/java -jar {1}{2}.jar --spring.profiles.active=prod,mysql,mq,native --spring.cloud.config.uri=http://192.168.19.132:8762 > {1}info.log 2>&1 &"
           ]
         }
       ]
     },
     {
-      "host": "192.168.10.15",
+      "host": "192.168.19.134",
       "port": 22,
       "username": "root",
-      "password": "nyqcjt@123",
+      "password": "Centos7.8",
       "packages": [
         {
           "enable": false,
-          "variables": [ "GLOBAL0", "/usr/local/nginx/html" ],
+          "variables": [ "GLOBAL0", "/taiji/jars/base/", "taiji-soa-base-0.0.1-SNAPSHOT-boot" ],
           "commands": [
-            //"$(type zip | awk '{print $3}') -r {1}/fmp.20201111.bak.zip {1}/fmp/*",
-            "zipbak {1}/fmp {1}/fmp/*",
-            //"sleep 5",
-            "upload F:\\能源汽车报\\项目-分支\\FusionMediaPlatform-web.4.3.1\\fmp\\fmp.zip {1}/fmp.zip",
+            //"mkdir -p {1}",
+            //"upload {0}\\taiji-soa-base\\target\\base.zip {1}base.zip",
+            "cd {1} && $(type -p unzip) -o {1}base.zip",
+            "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
             "sleep 5",
-            "$(type unzip | awk '{print $3}') -d {1}/fmp/ -o {1}/fmp.zip"
+            "nohup /usr/local/java/bin/java -jar {1}{2}.jar --spring.profiles.active=prod,mysql,mq  --spring.cloud.config.uri=http://192.168.19.132:8762 > {1}info.log 2>&1 &"
           ]
         },
         {
           "enable": false,
-          "variables": [ "GLOBAL0", "/usr/local/nginx/html" ],
+          "variables": [ "GLOBAL0", "/taiji/jars/mobile/", "taiji-soa-mobile-1.0-SNAPSHOT-boot" ],
           "commands": [
-            "zipbak {1}/fmp {1}/fmp/*",
-            //"upload {0}-web.4.3.1\\fmp\\src\\controller\\dist_newspaper_lib.js {1}/fmp/src/controller/dist_newspaper_lib.js",
-            //"upload {0}-web.4.3.1\\fmp\\src\\controller\\common.js {1}/fmp/src/controller/common.js",
-            "upload {0}-web.4.3.1\\fmp\\src\\lib\\person_center\\my_articles\\add_articles.js {1}/fmp/src/lib/person_center/my_articles/add_articles.js",
-            "upload {0}-web.4.3.1\\fmp\\src\\lib\\person_center\\audit_articles\\audit_articles.js {1}/fmp/src/lib/person_center/audit_articles/audit_articles.js"
+            //"mkdir -p {1}",
+            "upload {0}\\taiji-soa-mobile\\target\\{2}.jar {1}{2}.jar",
+            "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
+            "sleep 5",
+            "nohup /usr/local/java/bin/java -jar -Xms256m -Xmx512m {1}{2}.jar --spring.profiles.active=prod,mysql,mq --spring.cloud.config.uri=http://192.168.19.132:8762 > {1}info.log 2>&1 &"
+          ]
+        },
+        {
+          "enable": false,
+          "variables": [ "GLOBAL0", "/taiji/jars/web/", "taiji-api-web-0.0.1-SNAPSHOT-boot" ],
+          "commands": [
+            //"mkdir -p {1}",
+            //"upload {0}\\{2}.jar {1}{2}.jar",
+            "zipbak {1}taiji-api-web {1}{2}.jar {1}lib/* {1}resources/mapping/*",
+            "upload {0}\\taiji-api-web\\target\\web.zip {1}web.zip",
+            "cd {1} && $(type -p unzip) -o {1}web.zip",
+            "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
+            "sleep 5",
+            "nohup /usr/local/java/bin/java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=50051 -jar -Xms256m -Xmx512m {1}{2}.jar --spring.profiles.active=prod,mq,redis,hmtools --spring.cloud.config.uri=http://192.168.19.132:8762 > {1}info.log 2>&1 &"
+          ]
+        },
+        {
+          "enable": false,
+          "variables": [ "GLOBAL0", "/taiji/jars/business/", "taiji-api-business-1.0-SNAPSHOT-boot" ],
+          "commands": [
+            //"mkdir -p {1}",
+            "upload {0}\\taiji-api-business\\target\\{2}.jar {1}{2}.jar",
+            "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
+            "sleep 5",
+            "nohup /usr/local/java/bin/java -jar -Xms256m -Xmx512m {1}{2}.jar --spring.profiles.active=prod,mq --spring.cloud.config.uri=http://192.168.19.132:8762 > {1}info.log 2>&1 &"
+          ]
+        }
+      ]
+    },
+    {
+      "host": "192.168.19.135",
+      "port": 22,
+      "username": "root",
+      "password": "Centos7.8",
+      "packages": [
+        {
+          "enable": false,
+          "variables": [ "GLOBAL0", "/taiji/jars/content/", "taiji-soa-content-0.0.1-SNAPSHOT-boot", "content" ],
+          "commands": [
+            //"mkdir -p {1}",
+            //"upload {0}\\{2}.jar {1}{2}.jar",
+            "zipbak {1}taiji-soa-{3} {1}{2}.jar {1}lib/* {1}resources/mapping/*",
+            "upload {0}\\taiji-soa-content\\target\\content.zip {1}content.zip",
+            "cd {1} && $(type -p unzip) -o {1}content.zip",
+            "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
+            "sleep 5",
+            "nohup /usr/local/java/bin/java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=55003  -jar -Xms256m -Xmx512m {1}{2}.jar  --spring.profiles.active=prod,mq,mysql --spring.cloud.config.uri=http://192.168.19.132:8762 > {1}info.log 2>&1 &"
+            //-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=55003
+          ]
+        },
+        {
+          "enable": false,
+          "variables": [ "GLOBAL0", "/taiji/jars/textdiff/", "taiji-soa-textdiff-0.0.1-SNAPSHOT-boot", "textdiff" ],
+          "commands": [
+            //"mkdir -p {1}",
+            //"upload {0}\\{2}.jar {1}{2}.jar",
+            //"upload {0}\\taiji-soa-textdiff\\target\\{3}.zip {1}{3}.zip",
+            //"cd {1} && $(type -p unzip) -o {1}{3}.zip",
+            "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
+            "sleep 5",
+            "nohup /usr/local/java/bin/java -jar -Xms256m -Xmx512m {1}{2}.jar --spring.profiles.active=prod,mq,mysql --spring.cloud.config.uri=http://192.168.19.132:8762 > {1}info.log 2>&1 &"
+          ]
+        },
+        {
+          "enable": false,
+          "variables": [ "GLOBAL0", "/taiji/jars/xinhua/", "taiji-soa-xinhua-0.0.1-SNAPSHOT-boot", "xinhua" ],
+          "commands": [
+            "mkdir -p {1}",
+            //"upload {0}\\{2}.jar {1}{2}.jar",
+            "upload {0}\\taiji-soa-xinhua\\target\\{3}.zip {1}{3}.zip",
+            "cd {1} && $(type -p unzip) -o {1}{3}.zip",
+            "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
+            "sleep 5",
+            "nohup /usr/local/java/bin/java -jar -Xms256m -Xmx512m {1}{2}.jar --spring.profiles.active=prod,mq,mysql --spring.cloud.config.uri=http://192.168.19.132:8762 > {1}info.log 2>&1 &"
+          ]
+        },
+        {
+          "enable": false,
+          "variables": [ "GLOBAL0", "/taiji/jars/evaluate/", "taiji-soa-evaluate-1.0-SNAPSHOT-boot", "evaluate" ],
+          "commands": [
+            "mkdir -p {1}",
+            //"upload {0}\\{2}.jar {1}{2}.jar",
+            "zipbak {1}taiji-soa-evaluate {1}{2}.jar {1}lib/* {1}resources/mapping/*",
+            "upload {0}\\taiji-soa-evaluate\\target\\{3}.zip {1}{3}.zip",
+            "cd {1} && $(type -p unzip) -o {1}{3}.zip",
+            "kill -9 $(ps -ef|grep {2} | grep -v grep | awk '{print $2}')",
+            "sleep 5",
+            "nohup /usr/local/java/bin/java -jar -Xms256m -Xmx512m {1}{2}.jar --spring.profiles.active=prod,mq,mysql --spring.cloud.config.uri=http://192.168.19.132:8762 > {1}info.log 2>&1 &"
+          ]
+        }
+      ]
+    },
+    {
+      "host": "192.168.19.131",
+      "port": 22,
+      "username": "root",
+      "password": "Centos7.8",
+      "packages": [
+        {
+          "enable": false,
+          "variables": [ "GLOBAL0", "/usr/local/nginx/html/" ],
+          "commands": [
+            //"zipbak {1}fmp {1}fmp/*",
+            "upload D:\\TaijiProJava\\证券报\\web\\FusionMediaPlatform-web\\\\fmp.zip {1}html.zip",
+            "cd {1} && $(type -p unzip) -o {1}html.zip"
           ]
         }
       ]

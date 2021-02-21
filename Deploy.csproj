@@ -62,7 +62,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties app_1json__JsonSchema="http://json.schemastore.org/netlify.json" />
+      <UserProperties app_1json__JsonSchema="" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
